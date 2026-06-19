@@ -1,0 +1,101 @@
+:root {
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F0F4F8;
+  --color-bg-tertiary: #E1E9F1;
+  --color-bg-info: #D6E8F5;
+  --color-bg-warning: #FFF4E0;
+  --color-bg-danger: #FFE8E8;
+  --color-bg-success: #E8F5E9;
+  --color-bg-past: #E8EDF2;
+
+  --color-primary: #2C5F8D;
+  --color-primary-light: #4A7BAB;
+  --color-primary-lighter: #6B9AC7;
+  --color-primary-dark: #1E4367;
+
+  --color-text-primary: #1A2936;
+  --color-text-secondary: #4A5F73;
+  --color-text-tertiary: #7A8A99;
+  --color-text-info: #2C5F8D;
+  --color-text-warning: #8B6914;
+  --color-text-danger: #B83232;
+  --color-text-success: #2E7D32;
+  --color-text-past: #9AA8B5;
+
+  --color-border-primary: rgba(44,95,141,0.4);
+  --color-border-secondary: rgba(44,95,141,0.25);
+  --color-border-tertiary: rgba(44,95,141,0.12);
+
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-primary: #1A2936;
+    --color-bg-secondary: #243441;
+    --color-bg-tertiary: #2E3F4C;
+    --color-bg-info: #2C4A5F;
+    --color-bg-warning: #4A3D1F;
+    --color-bg-danger: #4A2626;
+    --color-bg-success: #2A4030;
+    --color-bg-past: #2A3540;
+
+    --color-primary: #6B9AC7;
+    --color-primary-light: #8AB4D9;
+    --color-primary-lighter: #A8CDEB;
+    --color-primary-dark: #4A7BAB;
+
+    --color-text-primary: #E8EDF2;
+    --color-text-secondary: #B8C5D1;
+    --color-text-tertiary: #8A9DAD;
+    --color-text-info: #8AB4D9;
+    --color-text-warning: #E6C57A;
+    --color-text-danger: #E89191;
+    --color-text-success: #90D494;
+    --color-text-past: #6B7A87;
+
+    --color-border-primary: rgba(107,154,199,0.4);
+    --color-border-secondary: rgba(107,154,199,0.25);
+    --color-border-tertiary: rgba(107,154,199,0.12);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+input,
+select {
+  font-family: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
