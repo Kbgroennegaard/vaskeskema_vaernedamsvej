@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { saveEmail, getApartmentSettings } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 function verifyToken(token: string | null | undefined): string | null {
   if (!token) return null;
   try {
