@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { saveEmail, getApartmentSettings } from '@/lib/db';
 
-function verifyToken(token: string | null): string | null {
+function verifyToken(token: string | null | undefined): string | null {
   if (!token) return null;
   try {
     const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
