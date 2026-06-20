@@ -12,7 +12,7 @@ function getISOWeek(date: Date): number {
   if (target.getDay() !== 4) {
     target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
   }
-  return 1 + Math.ceil((firstThursday - target) / 604800000);
+  return 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
 }
 
 // Get day index for today (0=man, 1=tir, etc.)
