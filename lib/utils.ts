@@ -7,7 +7,7 @@ export function getISOWeek(date: Date): number {
   if (target.getDay() !== 4) {
     target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
   }
-  return 1 + Math.ceil((firstThursday - target) / 604800000);
+  return 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
 }
 
 export function getCurrentWeek(): number {
@@ -38,19 +38,4 @@ export function isDateInPast(date: Date): boolean {
 
 export function getDefaultPassword(apartment: string): string {
   return `${apartment.replace(/\./g, '').replace(/ /g, '')}-vask`;
-}
-
-// Get the actual datetime for a booking slot
-export function getBookingDateTime(week: number, dayIndex: number, hour: string): Date {
-  const dates = getWeekDates(week);
-  const date = new Date(dates[dayIndex]);
-  const startHour = parseInt(hour.split('-')[0]);
-  date.setHours(startHour, 0, 0, 0);
-  return date;
-}
-
-// Get day index from day key
-export function getDayIndex(day: string): number {
-  const days = ['man', 'tir', 'ons', 'tor', 'fre', 'lor', 'son'];
-  return days.indexOf(day);
 }
