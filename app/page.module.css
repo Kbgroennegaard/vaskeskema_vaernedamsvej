@@ -1,3 +1,305 @@
+/* Login screen */
+.loginContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.loginBox {
+  background: var(--color-bg-primary);
+  border-radius: var(--border-radius-lg);
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  border: 1px solid var(--color-border-tertiary);
+}
+
+.loginTitle {
+  font-size: 26px;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.loginSubtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.loginForm label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-top: 12px;
+  margin-bottom: 6px;
+}
+
+.loginForm select,
+.loginForm input {
+  padding: 11px 14px;
+  border: 1.5px solid var(--color-border-secondary);
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-size: 15px;
+}
+
+.loginForm select:focus,
+.loginForm input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.loginForm button {
+  margin-top: 20px;
+  padding: 13px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.loginForm button:hover { background: var(--color-primary-dark); }
+.loginForm button:disabled { opacity: 0.6; cursor: default; }
+
+.loginError {
+  background: var(--color-bg-danger);
+  color: var(--color-text-danger);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-top: 14px;
+}
+
+.loginNote {
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
+
+.loginNote code {
+  background: var(--color-bg-secondary);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.optional {
+  font-weight: 400;
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+}
+
+/* Main app */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.titleArea h1 {
+  font-size: 20px;
+  color: var(--color-primary);
+}
+
+.loggedInAs {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.weekNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.weekNav button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.weekNav button:hover { background: var(--color-bg-secondary); }
+.weekNav button:disabled { opacity: 0.3; cursor: default; }
+
+.weekDisplay {
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 64px;
+  text-align: center;
+}
+
+.logoutBtn {
+  padding: 8px 14px;
+  font-size: 14px;
+  border: 0.5px solid var(--color-border-secondary);
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+
+.logoutBtn:hover { background: var(--color-bg-secondary); }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.statusMessage {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--color-bg-info);
+  color: var(--color-text-info);
+}
+
+.statusMessage.success { background: var(--color-bg-success); color: var(--color-text-success); }
+.statusMessage.error { background: var(--color-bg-danger); color: var(--color-text-danger); }
+.statusMessage.warning { background: var(--color-bg-warning); color: var(--color-text-warning); }
+
+.todayCount {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--color-text-tertiary);
+}
+
+.gridWrapper {
+  overflow-x: auto;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-tertiary);
+}
+
+.grid {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-bg-primary);
+  font-size: 13px;
+}
+
+.grid th, .grid td {
+  border: 1px solid var(--color-border-tertiary);
+  padding: 0;
+  text-align: center;
+}
+
+.grid thead th {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  padding: 8px 4px;
+  font-size: 12px;
+}
+
+.timeHeader { min-width: 64px; }
+.timeCell {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+  padding: 0 6px;
+}
+
+.dateCell {
+  font-weight: 400;
+  color: var(--color-text-tertiary);
+  font-size: 11px;
+}
+
+.weekend { background: var(--color-bg-tertiary); }
+
+.slot {
+  height: 36px;
+  min-width: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 0.12s;
+}
+
+.slot.empty { background: var(--color-bg-primary); color: var(--color-text-tertiary); }
+.slot.empty:hover { background: var(--color-bg-secondary); }
+.slot.mine { background: var(--color-primary); color: white; }
+.slot.other { background: var(--color-bg-tertiary); color: var(--color-text-secondary); cursor: not-allowed; }
+.slot.past { background: var(--color-bg-past); color: var(--color-text-past); cursor: not-allowed; }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendBox {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.legendBox.empty { background: var(--color-bg-primary); border: 1px solid var(--color-border-secondary); }
+.legendBox.mine { background: var(--color-primary); }
+.legendBox.other { background: var(--color-bg-tertiary); }
 
 /* Settings panel */
 .settingsBtn {
@@ -103,10 +405,4 @@
 .pushEnabled {
   font-size: 14px;
   color: var(--color-text-success);
-}
-
-.optional {
-  font-weight: 400;
-  color: var(--color-text-tertiary);
-  font-size: 12px;
 }
