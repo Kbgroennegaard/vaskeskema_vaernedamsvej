@@ -39,7 +39,7 @@ export default function Home() {
 
   const fetchSettings = useCallback(async (tok: string) => {
     try {
-      const res = await fetch('/api/settings', { headers: { 'Authorization': `Bearer ${tok}` } });
+      const res = await fetch('/api/settings', { headers: { 'Authorization': `Bearer ${tok}` }, cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setSavedEmail(data.email || '');
@@ -159,12 +159,13 @@ export default function Home() {
     localStorage.removeItem('vaskeskema_apartment');
     setIsAuthenticated(false); setToken(''); setApartment('');
     setShowSettings(false);
+    setCurrentWeek(getCurrentWeek());
   };
 
   const fetchBookings = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/bookings?week=${currentWeek}`);
+      const res = await fetch(`/api/bookings?week=${currentWeek}`, { cache: 'no-store' });
       const data = await res.json();
       if (res.ok) setBookings(data.bookings || {});
     } catch {}
