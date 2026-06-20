@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { addBooking, removeBooking, getBooking, countBookingsForDay } from '@/lib/db';
 import { DAYS, HOURS, MAX_BOOKINGS_PER_DAY } from '@/lib/types';
 
-function verifyToken(token: string | null): string | null {
+function verifyToken(token: string | null | undefined): string | null {
   if (!token) return null;
   try {
     const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
