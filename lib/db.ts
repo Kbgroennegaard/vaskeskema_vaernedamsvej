@@ -1,31 +1,35 @@
+import { Redis } from '@upstash/redis';
 import { WeekData, ApartmentSettings, PushSubscriptionData } from './types';
 
 const memoryStore = new Map<string, string>();
 
-const hasKV = process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN;
+const hasKV = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 
-let kv: any = null;
+let redis: Redis | null = null;
 if (hasKV) {
   try {
-    kv = require('@vercel/kv').kv;
+    redis = new Redis({
+      url: process.env.KV_REST_API_URL!,
+      token: process.env.KV_REST_API_TOKEN!,
+    });
   } catch (e) {
-    console.warn('Vercel KV not available, using memory storage');
+    console.error('Failed to initialize Upstash Redis, falling back to memory storage:', e);
   }
 }
 
 async function kvGet(key: string): Promise<any> {
-  if (kv) return await kv.get(key);
+  if (redis) return await redis.get(key);
   const data = memoryStore.get(key);
   return data ? JSON.parse(data) : null;
 }
 
 async function kvSet(key: string, value: any): Promise<void> {
-  if (kv) { await kv.set(key, value); return; }
+  if (redis) { await redis.set(key, value); return; }
   memoryStore.set(key, JSON.stringify(value));
 }
 
 async function kvDelete(key: string): Promise<void> {
-  if (kv) { await kv.del(key); return; }
+  if (redis) { await redis.del(key); return; }
   memoryStore.delete(key);
 }
 
