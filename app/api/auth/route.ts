@@ -1,4 +1,4 @@
-typescriptimport { NextRequest, NextResponse } from 'next/server';
+{ NextRequest, NextResponse } from 'next/server';
 import { APARTMENTS } from '@/lib/types';
 import { saveApartmentSettings, getApartmentSettings } from '@/lib/db';
 
