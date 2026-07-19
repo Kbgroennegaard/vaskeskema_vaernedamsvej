@@ -1,6 +1,4 @@
-Fil 2: Ret app/page.tsx
-Gå til filen → blyant-ikon → marker alt → slet → indsæt hele denne:
-typescript'use client';
+'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { APARTMENTS, HOURS, DAYS, DAY_LABELS, MONTH_NAMES, MAX_BOOKINGS_PER_DAY } from '@/lib/types';
