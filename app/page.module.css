@@ -241,12 +241,16 @@
   font-size: 12px;
 }
 
-.timeHeader { min-width: 64px; }
+.timeHeader { min-width: 64px; position: sticky; left: 0; z-index: 2; background: var(--color-bg-secondary); }
 .timeCell {
   font-size: 11px;
   color: var(--color-text-tertiary);
   white-space: nowrap;
   padding: 0 6px;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--color-bg-primary);
 }
 
 .dateCell {
