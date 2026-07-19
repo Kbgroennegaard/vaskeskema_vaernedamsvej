@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getWeekData, getAllApartmentSettings, hasNotificationBeenSent, markNotificationSent } from '@/lib/db';
 import { DAYS, DAY_LABELS, HOURS } from '@/lib/types';
+import nodemailer from 'nodemailer';
 
-// Get ISO week number
+export const dynamic = 'force-dynamic';
+
 function getISOWeek(date: Date): number {
   const target = new Date(date.valueOf());
   const dayNr = (date.getDay() + 6) % 7;
@@ -15,35 +17,26 @@ function getISOWeek(date: Date): number {
   return 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
 }
 
-// Get day index for today (0=man, 1=tir, etc.)
 function getTodayDayIndex(): number {
-  const day = new Date().getDay(); // 0=sun, 1=mon...
+  const day = new Date().getDay();
   return day === 0 ? 6 : day - 1;
 }
 
-// Parse hour string to start hour number
 function parseStartHour(hour: string): number {
   return parseInt(hour.split('-')[0]);
 }
 
-async function sendPushNotification(subscription: any, title: string, body: string) {
-  const webpush = require('web-push');
-
-  webpush.setVapidDetails(
-    'mailto:' + (process.env.VAPID_EMAIL || 'vaskeskema@example.com'),
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.VAPID_PRIVATE_KEY!
-  );
-
-  await webpush.sendNotification(subscription, JSON.stringify({ title, body, tag: 'reminder' }));
-}
-
 async function sendEmailNotification(email: string, apartment: string, dayLabel: string, hour: string) {
-  const { Resend } = require('resend');
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
 
-  await resend.emails.send({
-    from: 'Vaskeskema <noreply@vaskeskema.dk>',
+  await transporter.sendMail({
+    from: `Vaskeskema AB Værnedamsvej 11 <${process.env.GMAIL_USER}>`,
     to: email,
     subject: `🧺 Reminder: Din vask starter om 30 min (${hour})`,
     html: `
@@ -59,24 +52,14 @@ async function sendEmailNotification(email: string, apartment: string, dayLabel:
           </p>
         </div>
         <p style="color: #7A8A99; font-size: 13px;">
-          Husk at afbooke hvis du alligevel ikke kan bruge tiden, så andre kan benytte den.
+          Husk at afbooke hvis du alligevel ikke kan bruge tiden.
         </p>
-        <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://vaskeskema-vaernedamsvej.vercel.app'}" 
-           style="display: inline-block; background: #2C5F8D; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; margin-top: 8px;">
-          Åbn vaskeskema
-        </a>
       </div>
-    `
+    `,
   });
 }
 
 export async function GET(request: NextRequest) {
-  // Verify cron secret to prevent unauthorized calls
-  const authHeader = request.headers.get('authorization');
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
     const now = new Date();
     const currentWeek = getISOWeek(now);
@@ -84,14 +67,11 @@ export async function GET(request: NextRequest) {
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
 
-    // Find which hour slot starts in ~30 minutes
-    // e.g. if it's 09:28, notify about 10:00 slot
     const targetHour = currentMinute >= 25 ? currentHour + 1 : null;
     if (targetHour === null) {
       return NextResponse.json({ message: 'Not in notification window', sent: 0 });
     }
 
-    // Find matching hour slot
     const targetSlot = HOURS.find(h => parseStartHour(h) === targetHour);
     if (!targetSlot) {
       return NextResponse.json({ message: 'No slot at this hour', sent: 0 });
@@ -100,7 +80,6 @@ export async function GET(request: NextRequest) {
     const todayDay = DAYS[todayIndex];
     const todayLabel = DAY_LABELS[todayIndex];
 
-    // Get bookings for current week
     const weekData = await getWeekData(currentWeek);
     const bookingKey = `${todayDay}|${targetSlot}`;
     const bookedApartment = weekData[bookingKey];
@@ -109,58 +88,33 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: 'No booking at target time', sent: 0 });
     }
 
-    // Check if already notified
     const alreadySent = await hasNotificationBeenSent(bookedApartment, currentWeek, todayDay, targetSlot);
     if (alreadySent) {
       return NextResponse.json({ message: 'Already notified', sent: 0 });
     }
 
-    // Get apartment settings
     const allSettings = await getAllApartmentSettings();
     const aptSettings = allSettings.find(s => s.apartment === bookedApartment);
 
     let sent = 0;
 
-    if (aptSettings) {
-      // Send push notification
-      if (aptSettings.pushSubscription && process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) {
-        try {
-          await sendPushNotification(
-            aptSettings.pushSubscription,
-            '🧺 Vask starter om 30 min!',
-            `Din booking kl. ${targetSlot.replace('-', ':00–')}:00 starter snart`
-          );
-          sent++;
-        } catch (e) {
-          console.error('Push failed:', e);
-        }
-      }
-
-      // Send email
-      if (aptSettings.email && process.env.RESEND_API_KEY) {
-        try {
-          await sendEmailNotification(aptSettings.email, bookedApartment, todayLabel, targetSlot);
-          sent++;
-        } catch (e) {
-          console.error('Email failed:', e);
-        }
+    if (aptSettings?.email && process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+      try {
+        await sendEmailNotification(aptSettings.email, bookedApartment, todayLabel, targetSlot);
+        sent++;
+      } catch (e) {
+        console.error('Email failed:', e);
       }
     }
 
-    // Mark as sent
     if (sent > 0) {
       await markNotificationSent(bookedApartment, currentWeek, todayDay, targetSlot);
     }
 
-    return NextResponse.json({
-      message: `Notifications sent for ${bookedApartment}`,
-      sent,
-      slot: targetSlot,
-      day: todayLabel
-    });
+    return NextResponse.json({ message: `Notifications sent for ${bookedApartment}`, sent });
 
   } catch (error) {
-    console.error('Notify cron error:', error);
+    console.error('Notify error:', error);
     return NextResponse.json({ error: 'Server fejl' }, { status: 500 });
   }
 }
