@@ -1,4 +1,6 @@
-'use client';
+Fil 2: Ret app/page.tsx
+Gå til filen → blyant-ikon → marker alt → slet → indsæt hele denne:
+typescript'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { APARTMENTS, HOURS, DAYS, DAY_LABELS, MONTH_NAMES, MAX_BOOKINGS_PER_DAY } from '@/lib/types';
@@ -12,7 +14,6 @@ export default function Home() {
   const [apartment, setApartment] = useState('');
   const [token, setToken] = useState('');
   const [selectedApartment, setSelectedApartment] = useState('');
-  const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -129,7 +130,7 @@ export default function Home() {
       const res = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apartment: selectedApartment, password }),
+        body: JSON.stringify({ apartment: selectedApartment, email }),
       });
       const data = await res.json();
       if (!res.ok) { setLoginError(data.error || 'Login fejlede'); setIsLoggingIn(false); return; }
@@ -140,17 +141,6 @@ export default function Home() {
       setApartment(data.apartment);
       setIsAuthenticated(true);
       setIsLoggingIn(false);
-
-      // Save email if provided
-      if (email && email.includes('@')) {
-        await fetch('/api/settings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${data.token}` },
-          body: JSON.stringify({ email })
-        });
-        setSavedEmail(email);
-        setSettingsEmail(email);
-      }
     } catch { setLoginError('Netværksfejl - prøv igen'); setIsLoggingIn(false); }
   };
 
@@ -243,16 +233,11 @@ export default function Home() {
               <option value="">-- Vælg lejlighed --</option>
               {APARTMENTS.map(apt => <option key={apt} value={apt}>Lejl. {apt}</option>)}
             </select>
-            <label>Kodeord:</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="fx 2th-vask" required />
             <label>Email til reminders: <span className={styles.optional}>(valgfrit)</span></label>
             <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="din@email.dk" />
             {loginError && <div className={styles.loginError}>{loginError}</div>}
             <button type="submit" disabled={isLoggingIn}>{isLoggingIn ? 'Logger ind...' : 'Log ind'}</button>
           </form>
-          <div className={styles.loginNote}>
-            Kodeord: <code>[lejlighed]-vask</code> — fx <code>2th-vask</code>
-          </div>
         </div>
       </div>
     );
@@ -282,7 +267,6 @@ export default function Home() {
         <div className={styles.settingsPanel}>
           <h3>Notifikationer</h3>
           <p className={styles.settingsDesc}>Modtag en reminder 30 minutter før din bookede vasketid.</p>
-
           <div className={styles.settingsRow}>
             <label>Email-reminder:</label>
             <div className={styles.settingsInputRow}>
@@ -291,7 +275,6 @@ export default function Home() {
             </div>
             {savedEmail && <span className={styles.settingsSaved}>Nuværende: {savedEmail}</span>}
           </div>
-
           <div className={styles.settingsRow}>
             <label>Push-notifikationer:</label>
             {pushEnabled
@@ -338,7 +321,7 @@ export default function Home() {
                       const key = `${day}|${hour}`;
                       const booking = bookings[key];
                       const isPast = isDateInPast(dates[dayIndex]);
-                      let slotClass = `${styles.slot} ${isPast ? styles.past : booking === apartment ? styles.mine : booking ? styles.other : styles.empty}`;
+                      const slotClass = `${styles.slot} ${isPast ? styles.past : booking === apartment ? styles.mine : booking ? styles.other : styles.empty}`;
                       return (
                         <td key={day}>
                           <div className={slotClass} onClick={() => handleSlotClick(day, hour, dayIndex)}>
@@ -352,7 +335,6 @@ export default function Home() {
               </tbody>
             </table>
           </div>
-
           <div className={styles.legend}>
             <div className={styles.legendItem}><span className={`${styles.legendBox} ${styles.empty}`}></span>Ledig</div>
             <div className={styles.legendItem}><span className={`${styles.legendBox} ${styles.mine}`}></span>Din booking</div>
